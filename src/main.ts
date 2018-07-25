@@ -8,7 +8,7 @@ import {Builder} from "./roles/builder";
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
 export const loop = ErrorMapper.wrapLoop(() => {
     // Automatically delete memory of missing creeps
-    if (Game.time % 20 === 0) {
+    if (Game.time % 5 === 0) {
         console.log(`Current game tick is ${Game.time}`);
         for (const name in Memory.creeps) {
             if (!(name in Game.creeps)) {
@@ -19,7 +19,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
     const allCreeps = Object.keys(Game.creeps).map(creepName => Game.creeps[creepName] as CreepWithRole<BaseMemory>);
 
-    if (Game.time % 10 === 0) {
+    if (Game.time % 5 === 0) {
         for (const spawnName in Game.spawns) {
             const spawn = Game.spawns[spawnName];
             if (spawn.energy >= 250) {
@@ -40,12 +40,12 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
     function shouldSpawnMiners(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numMiners = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_MINER).length;
-        return numMiners < 6;
+        return numMiners < 4;
     }
 
     function shouldSpawnBuilders(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numMiners = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_BUILDER).length;
-        return numMiners < 4;
+        return numMiners < 5;
     }
 
     function spawnCreep(spawn: StructureSpawn, body: BodyPartConstant[], name: string, role: RoleType) {

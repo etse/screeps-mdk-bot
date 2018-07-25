@@ -9,7 +9,7 @@ export interface MinerMemory extends BaseMemory {
 
 export class Miner extends BaseRole<MinerMemory> {
     init() {
-        const shouldFillSpawn = Math.floor(Math.random() * 10) < 2;
+        const shouldFillSpawn = Math.floor(Math.random() * 10) < 5;
         if (shouldFillSpawn) {
             this.creep.memory.deposit = Game.spawns.FirstSpawn.id;
         } else {

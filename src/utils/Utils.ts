@@ -6,3 +6,7 @@ export function getRandomObjectOfType(room: Room, type: FindConstant): Structure
     }
     return null;
 }
+
+export function randomInRange(min: number, max: number): number {
+    return Math.floor(Math.random() * (max-min)) + min;
+}
