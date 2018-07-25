@@ -95,14 +95,13 @@ export class Builder extends BaseRole<BuilderMemory> {
             }
 
             if (this.creep.memory.buildTarget != null) {
-                const target = Game.getObjectById<ConstructionSite | Structure>(this.creep.memory.buildTarget)!;
-                if (this.creep.memory.state === WorkState.BUILD) {
+                const target = Game.getObjectById<ConstructionSite | Structure>(this.creep.memory.buildTarget);
+                if (target == null) {
+                    this.setNewWorkTarget();
+                } else if (this.creep.memory.state === WorkState.BUILD) {
                     const buildTarget = target as ConstructionSite;
                     if(this.creep.build(buildTarget) == ERR_NOT_IN_RANGE) {
                         this.creep.moveTo(target);
-                    }
-                    if (buildTarget.progress === buildTarget.progressTotal) {
-                        this.setNewWorkTarget();
                     }
                 } else {
                     const repairTarget = target as Structure;
@@ -116,6 +115,7 @@ export class Builder extends BaseRole<BuilderMemory> {
             }
 
             if (this.creep.carry.energy == 0) {
+                this.creep.memory.buildTarget = null;
                 this.creep.memory.state = WorkState.COLLECT_RESOURCE;
             }
         }
