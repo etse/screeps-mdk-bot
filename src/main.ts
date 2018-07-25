@@ -45,7 +45,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
     function shouldSpawnBuilders(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numMiners = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_BUILDER).length;
-        return numMiners < 5;
+        return numMiners < 4;
     }
 
     function spawnCreep(spawn: StructureSpawn, body: BodyPartConstant[], name: string, role: RoleType) {

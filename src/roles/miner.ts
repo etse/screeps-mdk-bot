@@ -21,10 +21,10 @@ export class Miner extends BaseRole<MinerMemory> {
     }
 
     static getBody(energy: number): BodyPartConstant[] {
-        const body = [MOVE, MOVE, WORK, CARRY];
-        const extraWorkParts = Math.floor((energy - 250) / 150);
+        const body = [MOVE, WORK, CARRY];
+        const extraWorkParts = Math.floor((energy - 200) / 200);
         for (let i = 0; i < extraWorkParts; i++) {
-            body.push(WORK, MOVE);
+            body.push(WORK, CARRY, MOVE);
         }
         return body;
     }
