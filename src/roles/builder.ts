@@ -1,13 +1,14 @@
 import {BaseMemory, BaseRole} from "./baserole";
 
 export interface BuilderMemory extends BaseMemory {
-    energySource: string;
-    buildTarget: string;
+    energySource: string | null;
+    buildTarget: string | null;
 }
 
 export class Builder extends BaseRole<BuilderMemory> {
     init() {
-        return;
+        this.creep.memory.energySource = null;
+        this.creep.memory.buildTarget = null;
     }
 
     static getBody(energy: number): BodyPartConstant[] {
@@ -20,7 +21,14 @@ export class Builder extends BaseRole<BuilderMemory> {
     }
 
     protected doRun() {
-        return;
+        if (this.creep.carry.energy === 0) {
+            this.creep.say("⛽", true);
+            if (this.creep.memory.energySource == null) {
+
+            }
+        } else {
+            this.creep.say("🛠", true);
+        }
     }
 
 }

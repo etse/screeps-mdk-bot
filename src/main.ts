@@ -2,6 +2,7 @@ import {ErrorMapper} from "utils/ErrorMapper";
 import {BaseMemory, CreepWithRole, RoleType} from "./roles/baserole";
 import {Miner} from "./roles/miner";
 import {getRoleForCreep} from "./roles/rolefactory";
+import {Builder} from "./roles/builder";
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
@@ -26,6 +27,8 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
                 if (shouldSpawnMiners(creepsInRoom)) {
                     spawnCreep(spawn, Miner.getBody(spawn.room.energyAvailable), "miner", RoleType.ROLE_MINER);
+                } else if (shouldSpawnBuilders(creepsInRoom)) {
+                    spawnCreep(spawn, Builder.getBody(spawn.room.energyAvailable), "builder", RoleType.ROLE_BUILDER);
                 }
             }
         }
@@ -38,6 +41,11 @@ export const loop = ErrorMapper.wrapLoop(() => {
     function shouldSpawnMiners(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numMiners = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_MINER).length;
         return numMiners < 6;
+    }
+
+    function shouldSpawnBuilders(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
+        const numMiners = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_BUILDER).length;
+        return numMiners < 4;
     }
 
     function spawnCreep(spawn: StructureSpawn, body: BodyPartConstant[], name: string, role: RoleType) {
