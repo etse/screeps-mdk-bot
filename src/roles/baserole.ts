@@ -31,7 +31,7 @@ export abstract class BaseRole<M extends BaseMemory> {
         this.doRun();
     }
 
-    static getBody(): BodyPartConstant[] {
+    static getBody(energy: number): BodyPartConstant[] {
         return [MOVE, MOVE, WORK, CARRY];
     }
 }

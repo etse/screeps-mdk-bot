@@ -20,7 +20,7 @@ export class Miner extends BaseRole<MinerMemory> {
         this.creep.memory.isMining = true;
     }
 
-    static getBody(): BodyPartConstant[] {
+    static getBody(energy: number): BodyPartConstant[] {
         return [MOVE, MOVE, WORK, CARRY];
     }
 

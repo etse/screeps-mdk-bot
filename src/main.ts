@@ -21,11 +21,11 @@ export const loop = ErrorMapper.wrapLoop(() => {
     if (Game.time % 10 === 0) {
         for (const spawnName in Game.spawns) {
             const spawn = Game.spawns[spawnName];
-            if (spawn.energy > spawn.energyCapacity / 2) {
+            if (spawn.energy >= spawn.energyCapacity) {
                 const creepsInRoom = allCreeps.filter(creep => creep.pos.roomName === spawn.pos.roomName);
 
                 if (shouldSpawnMiners(creepsInRoom)) {
-                    spawnCreep(spawn, Miner.getBody(), "miner", RoleType.ROLE_MINER);
+                    spawnCreep(spawn, Miner.getBody(spawn.energy), "miner", RoleType.ROLE_MINER);
                 }
             }
         }
