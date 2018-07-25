@@ -25,7 +25,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
                 const creepsInRoom = allCreeps.filter(creep => creep.pos.roomName === spawn.pos.roomName);
 
                 if (shouldSpawnMiners(creepsInRoom)) {
-                    spawnCreep(spawn, Miner.getBody(spawn.energy), "miner", RoleType.ROLE_MINER);
+                    spawnCreep(spawn, Miner.getBody(spawn.room.energyAvailable), "miner", RoleType.ROLE_MINER);
                 }
             }
         }

@@ -21,7 +21,7 @@ export class Miner extends BaseRole<MinerMemory> {
     }
 
     static getBody(energy: number): BodyPartConstant[] {
-        return [MOVE, MOVE, WORK, CARRY];
+        return [MOVE, MOVE, WORK, WORK, CARRY, CARRY];
     }
 
     protected doRun() {
