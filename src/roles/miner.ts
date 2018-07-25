@@ -31,6 +31,7 @@ export class Miner extends BaseRole<MinerMemory> {
 
     protected doRun() {
         if (this.creep.memory.isMining) {
+            this.creep.say("⛏", true);
             const source = Game.getObjectById<Source>(this.creep.memory.source)!;
             if (this.creep.harvest(source) < 0) {
                 this.creep.moveTo(source);
@@ -39,6 +40,7 @@ export class Miner extends BaseRole<MinerMemory> {
                 this.creep.memory.isMining = false;
             }
         } else {
+            this.creep.say("🚢", true);
             const deposit = Game.getObjectById<Structure>(this.creep.memory.deposit)!;
             if (this.creep.transfer(deposit, RESOURCE_ENERGY) < 0) {
                 this.creep.moveTo(deposit);
