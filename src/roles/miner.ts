@@ -15,7 +15,7 @@ export class Miner extends BaseRole<MinerMemory> {
     }
 
     private getDeposit(): StructureSpawn | StructureExtension | StructureController {
-        const shouldUpgradeController = randomInRange(0, 10) > 5;
+        const shouldUpgradeController = randomInRange(0, 10) < 3;
         if (shouldUpgradeController && this.creep.room.controller) {
             return this.creep.room.controller!;
         }
