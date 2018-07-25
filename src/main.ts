@@ -21,7 +21,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
     if (Game.time % 10 === 0) {
         for (const spawnName in Game.spawns) {
             const spawn = Game.spawns[spawnName];
-            if (spawn.energy >= spawn.energyCapacity) {
+            if (spawn.energy >= 250) {
                 const creepsInRoom = allCreeps.filter(creep => creep.pos.roomName === spawn.pos.roomName);
 
                 if (shouldSpawnMiners(creepsInRoom)) {

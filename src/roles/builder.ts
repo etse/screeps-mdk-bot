@@ -11,7 +11,12 @@ export class Builder extends BaseRole<BuilderMemory> {
     }
 
     static getBody(energy: number): BodyPartConstant[] {
-        return [MOVE, MOVE, WORK, WORK, CARRY, CARRY];
+        const body = [MOVE, MOVE, WORK, CARRY];
+        const extraWorkParts = Math.floor((energy - 250) / 250);
+        for (let i = 0; i < extraWorkParts; i++) {
+            body.push(WORK, CARRY, MOVE, MOVE);
+        }
+        return body;
     }
 
     protected doRun() {
