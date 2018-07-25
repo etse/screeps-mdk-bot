@@ -32,7 +32,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
     }
 
     allCreeps.forEach(function(creep) {
-        getRoleForCreep(creep).run()
+        getRoleForCreep(creep).run();
     });
 
     function shouldSpawnMiners(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
@@ -41,6 +41,6 @@ export const loop = ErrorMapper.wrapLoop(() => {
     }
 
     function spawnCreep(spawn: StructureSpawn, body: BodyPartConstant[], name: string, role: RoleType) {
-        return spawn.spawnCreep(body, `${name}-${Game.time}`, { memory: { role } })
+        return spawn.spawnCreep(body, `${name}-${Game.time}`, { memory: { role } });
     }
 });

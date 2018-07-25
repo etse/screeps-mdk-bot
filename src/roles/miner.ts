@@ -25,13 +25,6 @@ export class Miner extends BaseRole<MinerMemory> {
     }
 
     protected doRun() {
-        if (this.creep.carry.energy > 0) {
-            const sites = this.creep.pos.lookFor(LOOK_CONSTRUCTION_SITES);
-            if (sites.length > 0 && this.creep.build(sites[0]) === OK) {
-                return;
-            }
-        }
-
         if (this.creep.memory.isMining) {
             const source = Game.getObjectById<Source>(this.creep.memory.source)!;
             if (this.creep.harvest(source) < 0) {

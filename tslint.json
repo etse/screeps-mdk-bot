@@ -4,7 +4,9 @@
     ],
     "rules": {
         "forin": false,
-        "arrow-parens": true,
+        "array-type": false,
+        "only-arrow-functions": false,
+        "arrow-parens": false,
         "interface-name": [true, "never-prefix"],
         "ordered-imports": false,
         "member-access": false,
