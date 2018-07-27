@@ -28,7 +28,7 @@ export class Tower {
         if (this.tower.energy < this.tower.energyCapacity / 2) {
             return ERR_NOT_ENOUGH_ENERGY;
         }
-        const structureIsDamaged = (structure: Structure) => structure.hits < structure.hitsMax * 0.75;
+        const structureIsDamaged = (structure: Structure) => structure.hits < structure.hitsMax * 0.25;
         const damagedStructure = this.tower.pos.findClosestByRange<AnyStructure>(FIND_STRUCTURES, { filter: structureIsDamaged });
         if (damagedStructure == null) {
             return ERR_INVALID_TARGET;
