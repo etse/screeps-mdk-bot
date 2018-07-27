@@ -71,8 +71,8 @@ export class Builder extends BaseRole<BuilderMemory> {
     }
 
     protected doRun() {
-        if (this.creep.memory.state == WorkState.COLLECT_RESOURCE) {
-            this.creep.say("⛽", true);
+        if (this.creep.memory.state === WorkState.COLLECT_RESOURCE) {
+            this.creep.say("👷⛏", true);
             if (this.creep.memory.energySource == null) {
                 this.creep.memory.buildTarget = null;
                 this.creep.memory.energySource = this.getEnergySource().id;
@@ -80,7 +80,7 @@ export class Builder extends BaseRole<BuilderMemory> {
 
             if (this.creep.memory.energySource != null) {
                 const target = Game.getObjectById<Source>(this.creep.memory.energySource)!;
-                if (this.creep.harvest(target) == ERR_NOT_IN_RANGE) {
+                if (this.creep.harvest(target) === ERR_NOT_IN_RANGE) {
                     this.creep.moveTo(target);
                 }
             }
@@ -89,7 +89,7 @@ export class Builder extends BaseRole<BuilderMemory> {
                 this.setNewWorkTarget();
             }
         } else {
-            this.creep.say("🛠", true);
+            this.creep.say("👷🛠", true);
             if (this.creep.memory.buildTarget == null) {
                 this.setNewWorkTarget();
             }
@@ -100,12 +100,12 @@ export class Builder extends BaseRole<BuilderMemory> {
                     this.setNewWorkTarget();
                 } else if (this.creep.memory.state === WorkState.BUILD) {
                     const buildTarget = target as ConstructionSite;
-                    if(this.creep.build(buildTarget) == ERR_NOT_IN_RANGE) {
+                    if (this.creep.build(buildTarget) === ERR_NOT_IN_RANGE) {
                         this.creep.moveTo(target);
                     }
                 } else {
                     const repairTarget = target as Structure;
-                    if(this.creep.repair(repairTarget) == ERR_NOT_IN_RANGE) {
+                    if (this.creep.repair(repairTarget) === ERR_NOT_IN_RANGE) {
                         this.creep.moveTo(target);
                     }
                     if (repairTarget.hits === repairTarget.hitsMax) {
@@ -114,7 +114,7 @@ export class Builder extends BaseRole<BuilderMemory> {
                 }
             }
 
-            if (this.creep.carry.energy == 0) {
+            if (this.creep.carry.energy === 0) {
                 this.creep.memory.buildTarget = null;
                 this.creep.memory.state = WorkState.COLLECT_RESOURCE;
             }
