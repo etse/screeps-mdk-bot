@@ -6,6 +6,7 @@
         "forin": false,
         "array-type": false,
         "only-arrow-functions": false,
+        "max-line-length": [true, 160],
         "arrow-parens": false,
         "interface-name": [true, "never-prefix"],
         "ordered-imports": false,

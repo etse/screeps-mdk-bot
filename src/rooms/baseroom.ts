@@ -1,3 +1,3 @@
-export interface Baseroom<M extends Memory> extends Room {
+export interface Baseroom<M extends CreepMemory> extends Room {
     memory: M;
 }
