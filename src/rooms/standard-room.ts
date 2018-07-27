@@ -32,34 +32,47 @@ export class StandardRoom {
         return 0;
     }
 
-    private assignRoads() {
+    private buildRoads() {
         if (this.room.memory.roads.length === 0) {
             // assign road-locations
         }
+        this.room.memory.roads
+            .map(roadLocation => this.room.getPositionAt(roadLocation.x, roadLocation.y)!)
+            .forEach(pos => pos.createConstructionSite(STRUCTURE_ROAD));
     }
 
-    private assignExtensions() {
+    private buildExtensions() {
         if (this.room.memory.extensions.length < maxExtensions(this.getControllerLevel())) {
             // Assign extension-locations
         }
+        this.room.memory.roads
+            .map(roadLocation => this.room.getPositionAt(roadLocation.x, roadLocation.y)!)
+            .forEach(pos => pos.createConstructionSite(STRUCTURE_EXTENSION));
     }
 
-    private assignTowerLocations() {
+    private buildTowers() {
         if (this.room.memory.towers.length < maxTowers(this.getControllerLevel())) {
             // Assign tower locations
         }
+        this.room.memory.roads
+            .map(roadLocation => this.room.getPositionAt(roadLocation.x, roadLocation.y)!)
+            .forEach(pos => pos.createConstructionSite(STRUCTURE_TOWER));
     }
 
-    private assignSpawnLocations() {
+    private buildSpawns() {
         if (this.room.memory.spawns.length < maxSpawns(this.getControllerLevel())) {
             // Assign spawn-location;
         }
+        this.room.memory.roads
+            .map(roadLocation => this.room.getPositionAt(roadLocation.x, roadLocation.y)!)
+            .forEach(pos => pos.createConstructionSite(STRUCTURE_SPAWN, `${this.room.name}-${Game.time}`));
     }
 
     private constructBuildings() {
-        this.assignRoads();
-        this.assignExtensions();
-        this.assignTowerLocations();
+        this.buildSpawns();
+        this.buildRoads();
+        this.buildExtensions();
+        this.buildTowers();
     }
 
     private shouldSpawnMiners(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
