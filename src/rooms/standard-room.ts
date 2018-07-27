@@ -64,12 +64,12 @@ export class StandardRoom {
 
     private shouldSpawnMiners(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numMiners = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_MINER).length;
-        return numMiners < 4;
+        return numMiners < 8;
     }
 
     private shouldSpawnBuilders(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numMiners = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_BUILDER).length;
-        return numMiners < 4;
+        return numMiners < 6;
     }
 
     private spawnCreep(spawn: StructureSpawn, body: BodyPartConstant[], name: string, role: RoleType) {
@@ -84,9 +84,9 @@ export class StandardRoom {
             for (const spawn of spawns) {
                 if (this.room.energyAvailable >= 250) {
                     if (this.shouldSpawnMiners(allCreeps)) {
-                        this.spawnCreep(spawn, Miner.getBody(spawn.room.energyAvailable), "miner", RoleType.ROLE_MINER);
+                        this.spawnCreep(spawn, Miner.getBody(this.room.energyAvailable), "miner", RoleType.ROLE_MINER);
                     } else if (this.shouldSpawnBuilders(allCreeps)) {
-                        this.spawnCreep(spawn, Builder.getBody(spawn.room.energyAvailable), "builder", RoleType.ROLE_BUILDER);
+                        this.spawnCreep(spawn, Builder.getBody(this.room.energyAvailable), "builder", RoleType.ROLE_BUILDER);
                     }
                 }
             }
