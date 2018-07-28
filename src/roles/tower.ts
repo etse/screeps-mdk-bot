@@ -48,10 +48,6 @@ export class Tower {
         if (this.healMyUnits() === OK) {
             return OK;
         }
-
-        if (this.repairStructures() === OK) {
-            return OK;
-        }
         return OK;
     }
 }

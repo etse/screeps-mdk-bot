@@ -1,11 +1,10 @@
-import {ErrorMapper} from "utils/ErrorMapper";
-import {BaseMemory, CreepWithRole, RoleType} from "./roles/baserole";
+import {BaseMemory, CreepWithRole} from "./roles/baserole";
 import {getRoleForCreep} from "./roles/rolefactory";
 import {StandardRoom} from "./rooms/standard-room";
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
-export const loop = ErrorMapper.wrapLoop(() => {
+export const loop = () => {
     // Automatically delete memory of missing creeps
     if (Game.time % 5 === 0) {
         console.log(`Current game tick is ${Game.time}`);
@@ -21,4 +20,4 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
     allCreeps.forEach(creep => getRoleForCreep(creep).run());
     allRooms.forEach(room => room.loop());
-});
+};

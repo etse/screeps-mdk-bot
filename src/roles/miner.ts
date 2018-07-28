@@ -14,18 +14,31 @@ export class Miner extends BaseRole<MinerMemory> {
         this.creep.memory.deposit = null;
     }
 
-    private getDeposit(): StructureSpawn | StructureExtension | StructureController {
-        const shouldUpgradeController = randomInRange(0, 10) < 3;
-        if (shouldUpgradeController && this.creep.room.controller) {
-            return this.creep.room.controller!;
+    private getDeposit(): Structure {
+        const isContainer = (structure: StructureContainer) => structure.structureType === STRUCTURE_CONTAINER;
+        const isNotFull = (structure: StructureContainer) => structure.store[RESOURCE_ENERGY] < structure.storeCapacity;
+        const isANotFullContainer = (structure: StructureContainer) => isContainer(structure) && isNotFull(structure);
+
+        const container = this.creep.pos.findClosestByPath<StructureContainer>(FIND_STRUCTURES, { filter: isANotFullContainer});
+        if (container != null) {
+            return container;
         }
 
-        const energyContainers = this.creep.room.find<StructureExtension | StructureSpawn>(FIND_MY_STRUCTURES)
+        if (this.creep.room.controller != null && this.creep.room.controller.ticksToDowngrade < 20000) {
+            return this.creep.room.controller;
+        }
+
+        const energyContainers = this.creep.room.find<StructureExtension | StructureSpawn>(FIND_STRUCTURES)
             .filter(structure => structure.energy < structure.energyCapacity);
 
         if (energyContainers.length > 0) {
             return energyContainers[randomInRange(0, energyContainers.length)];
         }
+
+        if (this.creep.room.storage != null) {
+            return this.creep.room.storage;
+        }
+
         return this.creep.room.controller!;
     }
 
@@ -39,8 +52,8 @@ export class Miner extends BaseRole<MinerMemory> {
     }
 
     protected doRun() {
+        this.creep.say("⛏", true);
         if (this.creep.memory.isMining) {
-            this.creep.say("⛏⛏", true);
             const source = Game.getObjectById<Source>(this.creep.memory.source)!;
             if (this.creep.harvest(source) < 0) {
                 this.creep.moveTo(source);
@@ -49,24 +62,34 @@ export class Miner extends BaseRole<MinerMemory> {
                 this.creep.memory.isMining = false;
             }
         } else {
-            this.creep.say("⛏🚢", true);
             if (this.creep.memory.deposit == null) {
                 this.creep.memory.deposit = this.getDeposit().id;
             }
 
             if (this.creep.memory.deposit != null) {
-                const deposit = Game.getObjectById<StructureExtension | StructureController>(this.creep.memory.deposit)!;
-                if (deposit.structureType !== STRUCTURE_CONTROLLER && deposit.energy === deposit.energyCapacity) {
-                    this.creep.memory.deposit = null;
-                } else {
-                    if (this.creep.transfer(deposit, RESOURCE_ENERGY) < 0) {
-                        this.creep.moveTo(deposit);
+                type depositTypes = StructureExtension | StructureController | StructureContainer;
+                const deposit = Game.getObjectById<depositTypes>(this.creep.memory.deposit)!;
+                if (deposit.structureType === STRUCTURE_EXTENSION) {
+                    const extension = deposit as StructureExtension;
+                    if (extension.energy === extension.energyCapacity) {
+                        this.creep.memory.deposit = null;
+                        return;
                     }
+                } else if (deposit.structureType === STRUCTURE_CONTAINER) { 
+                    const container = deposit as StructureContainer;
+                    if (container.store[RESOURCE_ENERGY] === container.storeCapacity) {
+                        this.creep.memory.deposit = null;
+                        return;
+                    }
+                }
+                if (this.creep.transfer(deposit, RESOURCE_ENERGY) < 0) {
+                    this.creep.moveTo(deposit);
                 }
             }
 
             if (this.creep.carry.energy === 0) {
                 this.creep.memory.isMining = true;
+                this.creep.memory.deposit = null;
             }
         }
     }

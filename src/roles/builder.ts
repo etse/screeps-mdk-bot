@@ -30,6 +30,9 @@ export class Builder extends BaseRole<BuilderMemory> {
     }
 
     private getEnergySource(): Source | AnyStructure {
+        if (this.creep.room.storage != null && this.creep.room.storage.store[RESOURCE_ENERGY] > 50) {
+            return this.creep.room.storage;
+        }
         const sources = this.creep.room.find(FIND_SOURCES_ACTIVE);
         return sources[randomInRange(0, sources.length)];
     }
@@ -70,50 +73,62 @@ export class Builder extends BaseRole<BuilderMemory> {
         }
     }
 
-    protected doRun() {
-        if (this.creep.memory.state === WorkState.COLLECT_RESOURCE) {
-            this.creep.say("👷⛏", true);
-            if (this.creep.memory.energySource == null) {
-                this.creep.memory.buildTarget = null;
-                this.creep.memory.energySource = this.getEnergySource().id;
-            }
+    private collectResource() {
+        const canUseStorage = this.creep.room.storage != null && this.creep.room.storage.store[RESOURCE_ENERGY] >= 50;
 
-            if (this.creep.memory.energySource != null) {
-                const target = Game.getObjectById<Source>(this.creep.memory.energySource)!;
-                if (this.creep.harvest(target) === ERR_NOT_IN_RANGE) {
+        if (!canUseStorage && this.creep.memory.energySource == null) {
+            this.creep.memory.buildTarget = null;
+            this.creep.memory.energySource = this.getEnergySource().id;
+        }
+
+        if (!canUseStorage && this.creep.memory.energySource != null) {
+            const target = Game.getObjectById<Source>(this.creep.memory.energySource)!;
+            if (this.creep.harvest(target) === ERR_NOT_IN_RANGE) {
+                this.creep.moveTo(target);
+            }
+        } else if (canUseStorage) {
+            const energyToWithdraw = this.creep.carryCapacity - this.creep.carry.energy;
+            if (this.creep.withdraw(this.creep.room.storage!, RESOURCE_ENERGY, energyToWithdraw) == ERR_NOT_IN_RANGE) {
+                this.creep.moveTo(this.creep.room.storage!);
+            }
+        }
+    }
+
+    private buildAndRepair() {
+        if (this.creep.memory.buildTarget == null) {
+            this.setNewWorkTarget();
+        }
+
+        if (this.creep.memory.buildTarget != null) {
+            const target = Game.getObjectById<ConstructionSite | Structure>(this.creep.memory.buildTarget);
+            if (target == null) {
+                this.setNewWorkTarget();
+            } else if (this.creep.memory.state === WorkState.BUILD) {
+                const buildTarget = target as ConstructionSite;
+                if (this.creep.build(buildTarget) === ERR_NOT_IN_RANGE) {
                     this.creep.moveTo(target);
                 }
+            } else {
+                const repairTarget = target as Structure;
+                if (this.creep.repair(repairTarget) === ERR_NOT_IN_RANGE) {
+                    this.creep.moveTo(target);
+                }
+                if (repairTarget.hits === repairTarget.hitsMax) {
+                    this.setNewWorkTarget();
+                }
             }
+        }
+    }
 
+    protected doRun() {
+        this.creep.say("👷", true);
+        if (this.creep.memory.state === WorkState.COLLECT_RESOURCE) {
+            this.collectResource();
             if (this.creep.carry.energy === this.creep.carryCapacity) {
                 this.setNewWorkTarget();
             }
         } else {
-            this.creep.say("👷🛠", true);
-            if (this.creep.memory.buildTarget == null) {
-                this.setNewWorkTarget();
-            }
-
-            if (this.creep.memory.buildTarget != null) {
-                const target = Game.getObjectById<ConstructionSite | Structure>(this.creep.memory.buildTarget);
-                if (target == null) {
-                    this.setNewWorkTarget();
-                } else if (this.creep.memory.state === WorkState.BUILD) {
-                    const buildTarget = target as ConstructionSite;
-                    if (this.creep.build(buildTarget) === ERR_NOT_IN_RANGE) {
-                        this.creep.moveTo(target);
-                    }
-                } else {
-                    const repairTarget = target as Structure;
-                    if (this.creep.repair(repairTarget) === ERR_NOT_IN_RANGE) {
-                        this.creep.moveTo(target);
-                    }
-                    if (repairTarget.hits === repairTarget.hitsMax) {
-                        this.setNewWorkTarget();
-                    }
-                }
-            }
-
+            this.buildAndRepair();
             if (this.creep.carry.energy === 0) {
                 this.creep.memory.buildTarget = null;
                 this.creep.memory.state = WorkState.COLLECT_RESOURCE;

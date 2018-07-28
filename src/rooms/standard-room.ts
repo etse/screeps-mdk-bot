@@ -4,6 +4,8 @@ import {Tower} from "../roles/tower";
 import {Miner} from "../roles/miner";
 import {BaseMemory, CreepWithRole, RoleType} from "../roles/baserole";
 import {Builder} from "../roles/builder";
+import {Upgrader} from "../roles/upgrader";
+import {Logistics} from "../roles/logistics";
 
 interface Cell {
     x: number;
@@ -77,16 +79,26 @@ export class StandardRoom {
 
     private shouldSpawnMiners(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numMiners = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_MINER).length;
-        return numMiners < 8;
+        return numMiners < 4;
     }
 
     private shouldSpawnBuilders(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
-        const numMiners = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_BUILDER).length;
-        return numMiners < 6;
+        const numBuilders = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_BUILDER).length;
+        return numBuilders < 4;
     }
 
-    private spawnCreep(spawn: StructureSpawn, body: BodyPartConstant[], name: string, role: RoleType) {
-        return spawn.spawnCreep(body, `${name}-${Game.time}`, { memory: { role } });
+    private shouldSpawnUpgrader(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
+        const numUpgraders = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_UPGRADER).length;
+        return this.room.storage != null && numUpgraders < 4;
+    }
+
+    private shouldSpawnLogistics(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
+        const numUpgraders = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_LOGISTICS).length;
+        return this.room.storage != null && numUpgraders < 4;
+    }
+
+    private spawnCreep(spawn: StructureSpawn, body: BodyPartConstant[], role: RoleType) {
+        return spawn.spawnCreep(body, `$etse-${Game.time}`, { memory: { role } });
     }
 
     private spawnCreeps() {
@@ -97,9 +109,13 @@ export class StandardRoom {
             for (const spawn of spawns) {
                 if (this.room.energyAvailable >= 250) {
                     if (this.shouldSpawnMiners(allCreeps)) {
-                        this.spawnCreep(spawn, Miner.getBody(this.room.energyAvailable), "miner", RoleType.ROLE_MINER);
+                        this.spawnCreep(spawn, Miner.getBody(this.room.energyAvailable), RoleType.ROLE_MINER);
                     } else if (this.shouldSpawnBuilders(allCreeps)) {
-                        this.spawnCreep(spawn, Builder.getBody(this.room.energyAvailable), "builder", RoleType.ROLE_BUILDER);
+                        this.spawnCreep(spawn, Builder.getBody(this.room.energyAvailable), RoleType.ROLE_BUILDER);
+                    } else if (this.shouldSpawnUpgrader(allCreeps)) {
+                        this.spawnCreep(spawn, Upgrader.getBody(this.room.energyAvailable), RoleType.ROLE_UPGRADER);
+                    } else if (this.shouldSpawnLogistics(allCreeps)) {
+                        this.spawnCreep(spawn, Logistics.getBody(this.room.energyAvailable), RoleType.ROLE_LOGISTICS);
                     }
                 }
             }

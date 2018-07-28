@@ -10,3 +10,7 @@ export function getRandomObjectOfType(room: Room, type: FindConstant): Structure
 export function randomInRange(min: number, max: number): number {
     return Math.floor(Math.random() * (max-min)) + min;
 }
+
+export const moveOpts: MoveToOpts = {
+    visualizePathStyle: { lineStyle: "dotted" }
+};
