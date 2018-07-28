@@ -84,12 +84,12 @@ export class StandardRoom {
 
     private shouldSpawnBuilders(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numBuilders = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_BUILDER).length;
-        return numBuilders < 3;
+        return numBuilders < 1;
     }
 
     private shouldSpawnUpgrader(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numUpgraders = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_UPGRADER).length;
-        return this.room.storage != null && numUpgraders < 4;
+        return this.room.storage != null && numUpgraders < 3;
     }
 
     private shouldSpawnLogistics(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {

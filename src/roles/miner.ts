@@ -44,7 +44,7 @@ export class Miner extends BaseRole<MinerMemory> {
 
     static getBody(energy: number): BodyPartConstant[] {
         const body = [MOVE, WORK, CARRY];
-        const extraWorkParts = Math.floor((energy - 200) / 200);
+        const extraWorkParts = Math.min(Math.floor((energy - 200) / 200), 3);
         for (let i = 0; i < extraWorkParts; i++) {
             body.push(WORK, CARRY, MOVE);
         }

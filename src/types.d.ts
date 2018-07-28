@@ -2502,7 +2502,7 @@ interface RoomPosition {
      * @param opts An object containing pathfinding options (see Room.findPath), or one of the following: filter, algorithm
      * @returns An instance of a RoomObject.
      */
-    findClosestByPath<K extends Structure>(type: FindConstant, opts?: FindPathOpts & { filter?: (structure: K) => boolean }): K | null;
+    findClosestByPath<K>(type: FindConstant, opts?: FindPathOpts & { filter?: (structure: K) => boolean }): K | null;
     findClosestByPath<K extends FindConstant>(type: K | K[], opts?: FindPathOpts & { filter?: (structure: AnyStructure) => boolean }): AnyStructure | null;
 
     /**

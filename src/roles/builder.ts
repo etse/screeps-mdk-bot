@@ -22,7 +22,7 @@ export class Builder extends BaseRole<BuilderMemory> {
 
     static getBody(energy: number): BodyPartConstant[] {
         const body = [MOVE, WORK, CARRY];
-        const extraWorkParts = Math.floor((energy - 200) / 200);
+        const extraWorkParts = Math.min(Math.floor((energy - 200) / 200), 3);
         for (let i = 0; i < extraWorkParts; i++) {
             body.push(WORK, CARRY, MOVE);
         }
@@ -78,7 +78,8 @@ export class Builder extends BaseRole<BuilderMemory> {
 
         if (!canUseStorage && this.creep.memory.energySource == null) {
             this.creep.memory.buildTarget = null;
-            this.creep.memory.energySource = this.getEnergySource().id;
+            const newEnergySource = this.getEnergySource();
+            this.creep.memory.energySource = newEnergySource ? newEnergySource.id : null;
         }
 
         if (!canUseStorage && this.creep.memory.energySource != null) {

@@ -17,7 +17,7 @@ export class Upgrader extends BaseRole<UpgraderMemory> {
 
     static getBody(energy: number): BodyPartConstant[] {
         const body = [MOVE, CARRY, WORK];
-        const extraWorkParts = Math.floor((energy - 200) / 200);
+        const extraWorkParts = Math.min(Math.floor((energy - 200) / 200), 4);
         for (let i = 0; i < extraWorkParts; i++) {
             body.push(MOVE, CARRY, WORK);
         }

@@ -21,7 +21,7 @@ export class Logistics extends BaseRole<LogisticsMemory> {
 
     static getBody(energy: number): BodyPartConstant[] {
         const body = [MOVE, CARRY, CARRY];
-        const extraWorkParts = Math.floor((energy - 150) / 150);
+        const extraWorkParts = Math.min(Math.floor((energy - 150) / 150), 2);
         for (let i = 0; i < extraWorkParts; i++) {
             body.push(MOVE, CARRY, CARRY);
         }
@@ -46,7 +46,7 @@ export class Logistics extends BaseRole<LogisticsMemory> {
         const container = this.findTargetContainer();
         this.creep.memory.target = null;
         this.creep.memory.isDelivering = this.creep.carry[RESOURCE_ENERGY] >= 50;
-        if (container != null && !(this.creep.room.energyAvailable < 750 && this.creep.room.storage!.store[RESOURCE_ENERGY] > 750)) {
+        if (container != null && !(this.creep.room.energyAvailable < 500 && this.creep.room.storage!.store[RESOURCE_ENERGY] > 500 && randomInRange(0, 10) < 0.5)) {
             this.creep.memory.target = container.id;
             this.creep.memory.state = LogisticsState.CONTAINER_TO_STORAGE;
         } else {
