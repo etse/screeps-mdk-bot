@@ -46,7 +46,7 @@ export class Logistics extends BaseRole<LogisticsMemory> {
         const container = this.findTargetContainer();
         this.creep.memory.target = null;
         this.creep.memory.isDelivering = this.creep.carry[RESOURCE_ENERGY] > 50;
-        if (container != null && !(this.creep.room.energyAvailable < 250 && this.creep.room.storage!.store[RESOURCE_ENERGY] > 250)) {
+        if (container != null && !(this.creep.room.energyAvailable < 750 && this.creep.room.storage!.store[RESOURCE_ENERGY] > 750)) {
             this.creep.memory.target = container.id;
             this.creep.memory.state = LogisticsState.CONTAINER_TO_STORAGE;
         } else {
