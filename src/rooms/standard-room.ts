@@ -84,7 +84,7 @@ export class StandardRoom {
 
     private shouldSpawnBuilders(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numBuilders = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_BUILDER).length;
-        return numBuilders < 4;
+        return numBuilders < 3;
     }
 
     private shouldSpawnUpgrader(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
@@ -93,8 +93,8 @@ export class StandardRoom {
     }
 
     private shouldSpawnLogistics(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
-        const numUpgraders = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_LOGISTICS).length;
-        return this.room.storage != null && numUpgraders < 4;
+        const numLogistics = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_LOGISTICS).length;
+        return this.room.storage != null && numLogistics < 4;
     }
 
     private spawnCreep(spawn: StructureSpawn, body: BodyPartConstant[], role: RoleType) {
@@ -110,12 +110,12 @@ export class StandardRoom {
                 if (this.room.energyAvailable >= 250) {
                     if (this.shouldSpawnMiners(allCreeps)) {
                         this.spawnCreep(spawn, Miner.getBody(this.room.energyAvailable), RoleType.ROLE_MINER);
+                    } else if (this.shouldSpawnLogistics(allCreeps)) {
+                        this.spawnCreep(spawn, Logistics.getBody(this.room.energyAvailable), RoleType.ROLE_LOGISTICS);
                     } else if (this.shouldSpawnBuilders(allCreeps)) {
                         this.spawnCreep(spawn, Builder.getBody(this.room.energyAvailable), RoleType.ROLE_BUILDER);
                     } else if (this.shouldSpawnUpgrader(allCreeps)) {
                         this.spawnCreep(spawn, Upgrader.getBody(this.room.energyAvailable), RoleType.ROLE_UPGRADER);
-                    } else if (this.shouldSpawnLogistics(allCreeps)) {
-                        this.spawnCreep(spawn, Logistics.getBody(this.room.energyAvailable), RoleType.ROLE_LOGISTICS);
                     }
                 }
             }

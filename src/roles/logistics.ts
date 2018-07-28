@@ -46,7 +46,7 @@ export class Logistics extends BaseRole<LogisticsMemory> {
         const container = this.findTargetContainer();
         this.creep.memory.target = null;
         this.creep.memory.isDelivering = this.creep.carry[RESOURCE_ENERGY] > 50;
-        if (container != null) {
+        if (container != null && !(this.creep.room.energyAvailable < 250 && this.creep.room.storage!.store[RESOURCE_ENERGY] > 250)) {
             this.creep.memory.target = container.id;
             this.creep.memory.state = LogisticsState.CONTAINER_TO_STORAGE;
         } else {
@@ -74,7 +74,8 @@ export class Logistics extends BaseRole<LogisticsMemory> {
             if (container == null || container.store[RESOURCE_ENERGY] === 0) {
                 this.creep.memory.state = LogisticsState.IDLE;
             } else {
-                const withdrawResult = this.creep.withdraw(container, RESOURCE_ENERGY, this.creep.carryCapacity);
+                const amountToWidthdraw = Math.min(this.creep.carryCapacity - this.creep.carry[RESOURCE_ENERGY], container.store[RESOURCE_ENERGY]);
+                const withdrawResult = this.creep.withdraw(container, RESOURCE_ENERGY, amountToWidthdraw);
                 if (withdrawResult === ERR_NOT_IN_RANGE) {
                     this.creep.moveTo(container);
                 } else if (withdrawResult == ERR_NOT_ENOUGH_RESOURCES) {
@@ -91,8 +92,26 @@ export class Logistics extends BaseRole<LogisticsMemory> {
             const extension = Game.getObjectById<StructureExtension>(this.creep.memory.target!);
             if (extension == null || extension.energy == extension.energyCapacity) {
                 this.creep.memory.state = LogisticsState.IDLE;
-            } else if (this.creep.transfer(extension, RESOURCE_ENERGY, this.creep.carry.energy) === ERR_NOT_IN_RANGE) {
-                this.creep.moveTo(extension);
+            } else {
+                const amountToTransfer = Math.min(this.creep.carry[RESOURCE_ENERGY], extension.energyCapacity - extension.energy)
+                const transferResult = this.creep.transfer(extension, RESOURCE_ENERGY, amountToTransfer);
+                switch (transferResult) {
+                    case ERR_NOT_IN_RANGE:
+                        this.creep.moveTo(extension);
+                        break;
+                    case ERR_FULL:
+                        const newExtension = this.findTargetExtension();
+                        console.log("NEW EXTENSION?", newExtension);
+                        if (newExtension == null) {
+                            this.creep.memory.state = LogisticsState.IDLE;
+                        } else {
+                            this.creep.memory.target = newExtension.id;
+                        }
+                        break;
+                    default:
+                        this.creep.memory.state = LogisticsState.IDLE;
+                        break;
+                }
             }
             if (this.creep.carry[RESOURCE_ENERGY] === 0) {
                 this.creep.memory.state = LogisticsState.IDLE;
@@ -103,7 +122,7 @@ export class Logistics extends BaseRole<LogisticsMemory> {
                 this.creep.memory.state = LogisticsState.IDLE;
                 return;
             }
-            const amountToWithdraw = Math.min(this.creep.carryCapacity, storage.store[RESOURCE_ENERGY]);
+            const amountToWithdraw = Math.min(this.creep.carryCapacity - this.creep.carry[RESOURCE_ENERGY], storage.store[RESOURCE_ENERGY]);
             const withdrawResult = this.creep.withdraw(storage, RESOURCE_ENERGY, amountToWithdraw);
             if (withdrawResult === ERR_NOT_IN_RANGE) {
                 this.creep.moveTo(storage);

@@ -92,6 +92,9 @@ export class Builder extends BaseRole<BuilderMemory> {
                 this.creep.moveTo(this.creep.room.storage!);
             }
         }
+        if (this.creep.carry[RESOURCE_ENERGY] === this.creep.carryCapacity) {
+            this.setNewWorkTarget();
+        }
     }
 
     private buildAndRepair() {
