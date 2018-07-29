@@ -29,12 +29,12 @@ export class Builder extends BaseRole<BuilderMemory> {
         return body;
     }
 
-    private getEnergySource(): Source | AnyStructure {
+    private getEnergySource(): Source | AnyStructure | null {
         if (this.creep.room.storage != null && this.creep.room.storage.store[RESOURCE_ENERGY] > 50) {
             return this.creep.room.storage;
         }
-        const sources = this.creep.room.find(FIND_SOURCES_ACTIVE);
-        return sources[randomInRange(0, sources.length)];
+        const source = this.creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
+        return source;
     }
 
     private getObjectToBuild(): ConstructionSite | null {

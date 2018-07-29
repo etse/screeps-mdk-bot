@@ -25,7 +25,7 @@ export class Miner extends BaseRole<MinerMemory> {
         }
 
         const energyInRoom = this.creep.room.energyAvailable;
-        if (this.creep.room.controller != null && (this.creep.room.controller.ticksToDowngrade < 19000 || energyInRoom > 200)) {
+        if (this.creep.room.controller != null && (this.creep.room.controller.ticksToDowngrade < 3000 || energyInRoom > 200)) {
             return this.creep.room.controller;
         }
 
@@ -38,13 +38,6 @@ export class Miner extends BaseRole<MinerMemory> {
 
         if (this.creep.room.storage != null) {
             return this.creep.room.storage;
-        }
-
-        const spawns = this.creep.room.find(FIND_MY_SPAWNS)
-            .filter(structure => structure.energy < structure.energyCapacity);
-
-        if (spawns.length > 0) {
-            return spawns[0];
         }
 
         return this.creep.room.controller!;
