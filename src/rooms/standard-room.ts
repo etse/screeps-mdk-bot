@@ -82,9 +82,22 @@ export class StandardRoom {
         return numMiners < 3;
     }
 
+    private getMaxNumBuilders(): number {
+        const constructionSites = this.room.find(FIND_MY_CONSTRUCTION_SITES).length;
+        if (constructionSites <= 3) {
+            return 1;
+        } else if (constructionSites <= 5) {
+            return 2;
+        } else if (constructionSites <= 10) {
+            return 3;
+        } else {
+            return 4;
+        }
+    }
+
     private shouldSpawnBuilders(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numBuilders = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_BUILDER).length;
-        return numBuilders < 1;
+        return numBuilders < this.getMaxNumBuilders();
     }
 
     private shouldSpawnUpgrader(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {

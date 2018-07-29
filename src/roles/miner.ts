@@ -40,6 +40,13 @@ export class Miner extends BaseRole<MinerMemory> {
             return this.creep.room.storage;
         }
 
+        const spawns = this.creep.room.find(FIND_MY_SPAWNS)
+            .filter(structure => structure.energy < structure.energyCapacity);
+
+        if (spawns.length > 0) {
+            return spawns[0];
+        }
+
         return this.creep.room.controller!;
     }
 
