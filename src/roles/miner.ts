@@ -24,16 +24,16 @@ export class Miner extends BaseRole<MinerMemory> {
             return container;
         }
 
-        const energyInRoom = this.creep.room.energyAvailable;
-        if (this.creep.room.controller != null && (this.creep.room.controller.ticksToDowngrade < 3000 || energyInRoom > 200)) {
+        const energyMissing = this.creep.room.energyCapacityAvailable - this.creep.room.energyAvailable;
+        const maxTicksToDowngrade = this.creep.room.controller ? CONTROLLER_DOWNGRADE[this.creep.room.controller!.level] : 0;
+        if (this.creep.room.controller != null && (this.creep.room.controller.ticksToDowngrade < (maxTicksToDowngrade / 2) || energyMissing < 100)) {
             return this.creep.room.controller;
         }
 
-        const energyContainers = this.creep.room.find<StructureExtension | StructureSpawn>(FIND_STRUCTURES)
-            .filter(structure => structure.energy < structure.energyCapacity);
+        const energyContainer = this.creep.pos.findClosestByPath<StructureExtension | StructureSpawn>(FIND_STRUCTURES, { filter: structure => structure.energy < structure.energyCapacity});
 
-        if (energyContainers.length > 0) {
-            return energyContainers[randomInRange(0, energyContainers.length)];
+        if (energyContainer != null) {
+            return energyContainer;
         }
 
         if (this.creep.room.storage != null) {
@@ -74,9 +74,9 @@ export class Miner extends BaseRole<MinerMemory> {
             }
 
             if (this.creep.memory.deposit != null) {
-                type depositTypes = StructureExtension | StructureController | StructureContainer;
+                type depositTypes = StructureExtension | StructureController | StructureSpawn | StructureContainer;
                 const deposit = Game.getObjectById<depositTypes>(this.creep.memory.deposit)!;
-                if (deposit.structureType === STRUCTURE_EXTENSION) {
+                if (deposit.structureType === STRUCTURE_EXTENSION || deposit.structureType === STRUCTURE_SPAWN) {
                     const extension = deposit as StructureExtension;
                     if (extension.energy === extension.energyCapacity) {
                         this.creep.memory.deposit = null;
