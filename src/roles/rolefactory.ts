@@ -3,6 +3,9 @@ import {Miner, MinerMemory} from "./miner";
 import {Builder, BuilderMemory} from "./builder";
 import {Upgrader, UpgraderMemory} from "./upgrader";
 import {Logistics, LogisticsMemory} from "./logistics";
+import { Claimer, ClaimerMemory } from "./claimer";
+import { setMaxListeners } from "cluster";
+import { Settler } from "./settler";
 
 export function getRoleForCreep(creep: Creep): BaseRole<BaseMemory> {
     const type: RoleType = (creep.memory as BaseMemory).role;
@@ -15,6 +18,10 @@ export function getRoleForCreep(creep: Creep): BaseRole<BaseMemory> {
             return new Upgrader(creep as CreepWithRole<UpgraderMemory>);
         case RoleType.ROLE_LOGISTICS:
             return new Logistics(creep as CreepWithRole<LogisticsMemory>);
+        case RoleType.ROLE_CLAIMER:
+            return new Claimer(creep as CreepWithRole<ClaimerMemory>);
+        case RoleType.ROLE_SETTLER:
+            return new Settler(creep as CreepWithRole<BuilderMemory>);
         default:
             return new Miner(creep as CreepWithRole<MinerMemory>);
     }

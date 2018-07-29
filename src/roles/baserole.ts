@@ -2,7 +2,9 @@ export enum RoleType {
     ROLE_MINER,
     ROLE_BUILDER,
     ROLE_LOGISTICS,
-    ROLE_UPGRADER
+    ROLE_UPGRADER,
+    ROLE_CLAIMER,
+    ROLE_SETTLER
 }
 
 export interface BaseMemory {
@@ -29,7 +31,11 @@ export abstract class BaseRole<M extends BaseMemory> {
             this.init();
             this.creep.memory.initialized = true;
         }
-        this.doRun();
+        try {
+            this.doRun();
+        } catch (e) {
+            console.log(this.creep.name, this.creep.memory.role, (e as Error).stack);
+        }
     }
 
     static getBody(energy: number): BodyPartConstant[] {

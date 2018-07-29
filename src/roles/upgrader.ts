@@ -1,5 +1,4 @@
 import {BaseMemory, BaseRole} from "./baserole";
-import {randomInRange} from "../utils/Utils";
 
 enum UpgraderState {
     COLLECTING_RESOURCE,

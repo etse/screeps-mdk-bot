@@ -73,7 +73,7 @@ export class Builder extends BaseRole<BuilderMemory> {
         }
     }
 
-    private collectResource() {
+    protected collectResource() {
         const canUseStorage = this.creep.room.storage != null && this.creep.room.storage.store[RESOURCE_ENERGY] >= 50;
 
         if (!canUseStorage && this.creep.memory.energySource == null) {

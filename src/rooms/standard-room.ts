@@ -21,7 +21,7 @@ interface StandardRoomMemory extends CreepMemory {
 }
 
 export class StandardRoom {
-    private room: Baseroom<StandardRoomMemory>;
+    public room: Baseroom<StandardRoomMemory>;
 
     constructor(room: Room) {
         this.room = room as Baseroom<StandardRoomMemory>;
@@ -79,7 +79,7 @@ export class StandardRoom {
 
     private shouldSpawnMiners(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numMiners = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_MINER).length;
-        return numMiners < 4;
+        return numMiners < 3;
     }
 
     private shouldSpawnBuilders(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
@@ -89,16 +89,16 @@ export class StandardRoom {
 
     private shouldSpawnUpgrader(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numUpgraders = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_UPGRADER).length;
-        return this.room.storage != null && numUpgraders < 3;
+        return this.room.storage != null && numUpgraders < 4;
     }
 
     private shouldSpawnLogistics(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numLogistics = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_LOGISTICS).length;
-        return this.room.storage != null && numLogistics < 4;
+        return this.room.storage != null && numLogistics < 3;
     }
 
     private spawnCreep(spawn: StructureSpawn, body: BodyPartConstant[], role: RoleType) {
-        return spawn.spawnCreep(body, `$etse-${Game.time}`, { memory: { role } });
+        return spawn.spawnCreep(body, `etse-${Game.time}`, { memory: { role } });
     }
 
     private spawnCreeps() {
@@ -143,7 +143,7 @@ export class StandardRoom {
             this.init();
         }
 
-        if (this.room.controller!.my) {
+        if (this.room.controller != null && this.room.controller.my) {
             this.constructBuildings();
             this.spawnCreeps();
             this.updateTowers();

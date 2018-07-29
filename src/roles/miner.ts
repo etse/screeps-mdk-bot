@@ -9,7 +9,7 @@ export interface MinerMemory extends BaseMemory {
 
 export class Miner extends BaseRole<MinerMemory> {
     init() {
-        this.creep.memory.source = getRandomObjectOfType(this.creep.room, FIND_SOURCES)!.id;
+        this.creep.memory.source = getRandomObjectOfType(this.creep.room, FIND_SOURCES_ACTIVE)!.id;
         this.creep.memory.isMining = true;
         this.creep.memory.deposit = null;
     }
@@ -24,7 +24,8 @@ export class Miner extends BaseRole<MinerMemory> {
             return container;
         }
 
-        if (this.creep.room.controller != null && this.creep.room.controller.ticksToDowngrade < 20000) {
+        const energyInRoom = this.creep.room.energyAvailable;
+        if (this.creep.room.controller != null && (this.creep.room.controller.ticksToDowngrade < 19000 || energyInRoom > 200)) {
             return this.creep.room.controller;
         }
 
@@ -55,8 +56,14 @@ export class Miner extends BaseRole<MinerMemory> {
         this.creep.say("⛏", true);
         if (this.creep.memory.isMining) {
             const source = Game.getObjectById<Source>(this.creep.memory.source)!;
-            if (this.creep.harvest(source) < 0) {
+            const miningResult = this.creep.harvest(source);
+            if (miningResult === ERR_NOT_IN_RANGE) {
                 this.creep.moveTo(source);
+            } else if (miningResult === ERR_NOT_ENOUGH_RESOURCES && randomInRange(0, 100) > 97) {
+                const newSource = getRandomObjectOfType(this.creep.room, FIND_SOURCES_ACTIVE);
+                if (newSource !== null) {
+                    this.creep.memory.source = newSource.id;
+                }
             }
             if (this.creep.carry.energy === this.creep.carryCapacity) {
                 this.creep.memory.isMining = false;
