@@ -38,11 +38,7 @@ export class Builder extends BaseRole<BuilderMemory> {
     }
 
     private getObjectToBuild(): ConstructionSite | null {
-        const constructionSites = this.creep.room.find(FIND_MY_CONSTRUCTION_SITES);
-        if (constructionSites.length > 0) {
-            return constructionSites[randomInRange(0, constructionSites.length)];
-        }
-        return null;
+        return this.creep.pos.findClosestByPath(FIND_MY_CONSTRUCTION_SITES);
     }
 
     private getObjectToRepair(): Structure | null {
