@@ -6,6 +6,8 @@ import {BaseMemory, CreepWithRole, RoleType} from "../roles/baserole";
 import {Builder} from "../roles/builder";
 import {Upgrader} from "../roles/upgrader";
 import {Logistics} from "../roles/logistics";
+import { Defender } from "roles/defender";
+import { Spook } from "roles/spook";
 
 interface Cell {
     x: number;
@@ -85,7 +87,7 @@ export class StandardRoom {
     private getMaxNumBuilders(): number {
         const constructionSites = this.room.find(FIND_MY_CONSTRUCTION_SITES).length;
         if (constructionSites <= 3) {
-            return 1;
+            return 2;
         } else if (constructionSites <= 5) {
             return 2;
         } else if (constructionSites <= 10) {
@@ -98,6 +100,16 @@ export class StandardRoom {
     private shouldSpawnBuilders(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
         const numBuilders = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_BUILDER).length;
         return numBuilders < this.getMaxNumBuilders();
+    }
+
+    private shouldSpawnDefenders(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
+        const numDefenders = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_DEFENDER).length;
+        return numDefenders < 1;
+    }
+
+    private shouldSpawnSpook(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
+        const numDefenders = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_SPOOK).length;
+        return numDefenders < 1;
     }
 
     private shouldSpawnUpgrader(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
@@ -123,12 +135,16 @@ export class StandardRoom {
                 if (this.room.energyAvailable >= 250) {
                     if (this.shouldSpawnMiners(allCreeps)) {
                         this.spawnCreep(spawn, Miner.getBody(this.room.energyAvailable), RoleType.ROLE_MINER);
+                    } else if (this.shouldSpawnDefenders(allCreeps)) {
+                        this.spawnCreep(spawn, Defender.getBody(this.room.energyAvailable), RoleType.ROLE_DEFENDER);
                     } else if (this.shouldSpawnLogistics(allCreeps)) {
                         this.spawnCreep(spawn, Logistics.getBody(this.room.energyAvailable), RoleType.ROLE_LOGISTICS);
                     } else if (this.shouldSpawnBuilders(allCreeps)) {
                         this.spawnCreep(spawn, Builder.getBody(this.room.energyAvailable), RoleType.ROLE_BUILDER);
                     } else if (this.shouldSpawnUpgrader(allCreeps)) {
                         this.spawnCreep(spawn, Upgrader.getBody(this.room.energyAvailable), RoleType.ROLE_UPGRADER);
+                    } else if (this.shouldSpawnSpook(allCreeps)) {
+                        this.spawnCreep(spawn, Spook.getBody(this.room.energyAvailable), RoleType.ROLE_SPOOK);
                     }
                 }
             }

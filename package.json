@@ -36,7 +36,7 @@
     "rollup-plugin-screeps": "^0.1.2",
     "rollup-plugin-typescript2": "^0.16.1",
     "tslint": "^5.9.1",
-    "typescript": "^2.8.3"
+    "typescript": "^3.0.1"
   },
   "dependencies": {
     "source-map": "~0.7.3"

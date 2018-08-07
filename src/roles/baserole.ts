@@ -4,7 +4,9 @@ export enum RoleType {
     ROLE_LOGISTICS,
     ROLE_UPGRADER,
     ROLE_CLAIMER,
-    ROLE_SETTLER
+    ROLE_SETTLER,
+    ROLE_DEFENDER,
+    ROLE_SPOOK
 }
 
 export interface BaseMemory {
