@@ -87,11 +87,11 @@ export class Spook extends BaseRole<SpookMemory> {
         this.creep.say("👻", true);
 
         if (this.controllerNotSignedByMe()) {
-            console.log("signing", this.signController());
+            this.signController();
         } else if (this.shouldStompConstructionSites()) {
-            console.log("stomping", this.stompConstructionSites());
+            this.stompConstructionSites();
         } else {
-            console.log("moving", this.moveToNextRoom());
+            this.moveToNextRoom();
         }
     }
 
