@@ -1,5 +1,5 @@
 import {BaseMemory, BaseRole} from "./baserole";
-import { randomInRange } from "utils/Utils";
+import { randomInRange, moveOpts } from "utils/Utils";
 
 export interface SpookMemory extends BaseMemory {
     nextRoomExit: RoomPosition | null;
@@ -45,10 +45,10 @@ export class Spook extends BaseRole<SpookMemory> {
     }
 
     private signController(): ScreepsReturnCode {
-        const username = this.creep.owner;
+        const username = this.creep.owner.username;
         const retVal = this.creep.signController(this.creep.room.controller!, `${username} was here!`)
         if (retVal === ERR_NOT_IN_RANGE) {
-            return this.creep.moveTo(this.creep.room.controller!);
+            return this.creep.moveTo(this.creep.room.controller!, moveOpts);
         }
         return retVal;
     }
@@ -60,7 +60,7 @@ export class Spook extends BaseRole<SpookMemory> {
                 const nextObject = this.getObjectToStomp();
                 this.creep.memory.harassObject = nextObject == null ? null : nextObject.id;
             } else {
-                const retVal = this.creep.moveTo(site);
+                const retVal = this.creep.moveTo(site, moveOpts);
                 if (retVal != OK || this.creep.pos.isEqualTo(site.pos)) {
                     const nextObject = this.getObjectToStomp();
                     this.creep.memory.harassObject = nextObject == null ? null : nextObject.id;
@@ -77,7 +77,8 @@ export class Spook extends BaseRole<SpookMemory> {
             this.creep.memory.nextRoomExit = this.getNextRoomExit();
         }
         if (this.creep.memory.nextRoomExit != null) {
-            return this.creep.moveTo(this.creep.memory.nextRoomExit);
+            const pos = this.creep.memory.nextRoomExit;
+            return this.creep.moveTo(pos.x, pos.y, moveOpts);
         }
         return ERR_NOT_FOUND;
     }
@@ -86,11 +87,11 @@ export class Spook extends BaseRole<SpookMemory> {
         this.creep.say("👻", true);
 
         if (this.controllerNotSignedByMe()) {
-            this.signController();
+            console.log("signing", this.signController());
         } else if (this.shouldStompConstructionSites()) {
-            this.stompConstructionSites();
+            console.log("stomping", this.stompConstructionSites());
         } else {
-            this.moveToNextRoom();
+            console.log("moving", this.moveToNextRoom());
         }
     }
 
