@@ -108,7 +108,8 @@ export class StandardRoom {
     }
 
     private shouldSpawnSpook(creepsInRoom: CreepWithRole<BaseMemory>[]): boolean {
-        const numDefenders = creepsInRoom.filter(creep => creep.memory.role === RoleType.ROLE_SPOOK).length;
+        const allCreeps = Object.keys(Game.creeps).map(name => Game.creeps[name] as CreepWithRole<BaseMemory>);
+        const numDefenders = allCreeps.filter(creep => creep.memory.role === RoleType.ROLE_SPOOK).length;
         return numDefenders < 1;
     }
 
